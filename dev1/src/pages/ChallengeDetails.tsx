@@ -261,7 +261,7 @@ function ChallengeDetail() {
                       {(currentUser?.uid === challenge.creator || currentUser?.uid === participant.uid) && participant.uid !== challenge.creator && (
                         <button
                           onClick={() => handleRemoveParticipant(participant.uid)}
-                          className="ml-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+                          className="ml-2 cursor-pointer  text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors"
                           title={currentUser.uid === participant.uid ? "Leave challenge" : "Remove participant"}
                         >
                           <XIcon className="w-4 h-4" />

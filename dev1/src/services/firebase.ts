@@ -5,17 +5,15 @@ import { getDatabase } from 'firebase/database';
 import type { Challenge, Entry, Participant } from '../types';
 import { ref, get, push, set, remove } from 'firebase/database';
 
-
 const firebaseConfig = {
-  apiKey: "AIzaSyC1mEKXcg_LTwW0aAUdNHZ1HBrZ3iW39NQ",
-  authDomain: "diet-and-weight-tracker.firebaseapp.com",
-  databaseURL: "https://diet-and-weight-tracker-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "diet-and-weight-tracker",
-  storageBucket: "diet-and-weight-tracker.firebasestorage.app",
-  messagingSenderId: "155625588117",
-  appId: "1:155625588117:web:64d0c5f5efbb796d0a229c"
+  apiKey: import.meta.env.VITE_APIKEY,
+  authDomain: import.meta.env.VITE_AUTHDOMAIN,
+  databaseURL: import.meta.env.VITE_DATABASEURL,
+  projectId: import.meta.env.VITE_PROJECTID,
+  storageBucket: import.meta.env.VITE_STORAGEBUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGINGSENDERID,
+  appId: import.meta.env.VITE_APPID,
 };
-
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
