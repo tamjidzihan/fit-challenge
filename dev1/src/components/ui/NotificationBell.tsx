@@ -1,60 +1,70 @@
-import { useState, useEffect, useCallback } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect, useRef } from 'react';
+import { ref, onValue, off, set } from 'firebase/database';
 import { BellIcon, CheckIcon, CheckCircleIcon, XCircleIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
-import { notificationService, challengeRequestService, challengeService, database } from '../../services/firebase';
+import { database, notificationService, challengeRequestService, challengeService } from '../../services/firebase';
 import { Button } from '../ui/Button';
 import type { Notification } from '../../types/index';
-import { ref, set } from 'firebase/database';
 
 function NotificationBell() {
     const { currentUser } = useAuth();
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [isOpen, setIsOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [processingRequest, setProcessingRequest] = useState<string | null>(null);
 
-    const loadNotifications = useCallback(async () => {
+    const bellRef = useRef<HTMLDivElement>(null);
+
+    // Real-time notifications listener
+    useEffect(() => {
         if (!currentUser) return;
-        try {
-            setLoading(true);
-            const userNotifications = await notificationService.getUserNotifications(currentUser.uid);
-            setNotifications(userNotifications);
-        } catch (error) {
-            console.error('Error loading notifications:', error);
-        } finally {
-            setLoading(false);
-        }
+
+        const notificationsRef = ref(database, `notifications/${currentUser.uid}`);
+        const unsubscribe = onValue(notificationsRef, (snapshot) => {
+            const data = snapshot.val() || {};
+            const notifs: Notification[] = Object.entries(data).map(([id, notif]: [string, any]) => ({
+                id,
+                ...notif
+            })).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            setNotifications(notifs);
+        });
+
+        return () => {
+            off(notificationsRef, 'value', unsubscribe);
+        };
     }, [currentUser]);
 
+    // Close dropdown on outside click
     useEffect(() => {
-        if (currentUser) {
-            loadNotifications();
-        }
-    }, [currentUser, loadNotifications]);
+        const handleClickOutside = (event: MouseEvent) => {
+            if (bellRef.current && !bellRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+
+        if (isOpen) document.addEventListener('mousedown', handleClickOutside);
+        else document.removeEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOpen]);
 
     const handleMarkAsRead = async (notificationId: string) => {
         if (!currentUser) return;
-        try {
-            await notificationService.markAsRead(notificationId, currentUser.uid);
-            setNotifications(prev =>
-                prev.map(notif =>
-                    notif.id === notificationId ? { ...notif, read: true } : notif
-                )
-            );
-        } catch (error) {
-            console.error('Error marking notification as read:', error);
-        }
+        await notificationService.markAsRead(notificationId, currentUser.uid);
+        setNotifications(prev =>
+            prev.map(notif =>
+                notif.id === notificationId ? { ...notif, read: true } : notif
+            )
+        );
     };
 
     const handleMarkAllAsRead = async () => {
         if (!currentUser) return;
-        try {
-            await notificationService.markAllAsRead(currentUser.uid);
-            setNotifications(prev => prev.map(notif => ({ ...notif, read: true })));
-        } catch (error) {
-            console.error('Error marking all notifications as read:', error);
-        }
+        await notificationService.markAllAsRead(currentUser.uid);
+        setNotifications(prev => prev.map(notif => ({ ...notif, read: true })));
     };
 
     const handleChallengeRequest = async (notification: Notification, accept: boolean) => {
@@ -62,15 +72,11 @@ function NotificationBell() {
 
         setProcessingRequest(notification.id);
         try {
-            // Update the challenge request status
-            await challengeRequestService.updateRequestStatus(
-                notification.data.requestId,
-                accept ? 'accepted' : 'rejected'
-            );
+            await challengeRequestService.updateRequestStatus(notification.data.requestId, accept ? 'accepted' : 'rejected');
 
             if (accept && notification.data.challengeId) {
-                // Add current user to the challenge participants
                 const challenge = await challengeService.getById(notification.data.challengeId);
+
                 if (challenge && !challenge.participants.some(p => p.uid === currentUser.uid)) {
                     const updatedParticipants = [
                         ...challenge.participants,
@@ -83,7 +89,6 @@ function NotificationBell() {
 
                     await set(ref(database, `challenges/${challenge.id}/participants`), updatedParticipants);
 
-                    // Create a success notification
                     await notificationService.createNotification(
                         currentUser.uid,
                         `You've joined the challenge "${challenge.name}"!`,
@@ -91,7 +96,6 @@ function NotificationBell() {
                         { challengeId: challenge.id }
                     );
 
-                    // Notify the challenge creator
                     if (notification.data.fromUserId) {
                         await notificationService.createNotification(
                             notification.data.fromUserId,
@@ -102,7 +106,6 @@ function NotificationBell() {
                     }
                 }
             } else if (!accept && notification.data.fromUserId) {
-                // Notify the sender that the request was declined
                 await notificationService.createNotification(
                     notification.data.fromUserId,
                     `${currentUser.displayName} declined your challenge invitation.`,
@@ -111,9 +114,8 @@ function NotificationBell() {
                 );
             }
 
-            // Mark the original notification as read and remove it
-            await handleMarkAsRead(notification.id);
             setNotifications(prev => prev.filter(n => n.id !== notification.id));
+            await handleMarkAsRead(notification.id);
 
         } catch (error) {
             console.error('Error handling challenge request:', error);
@@ -125,11 +127,11 @@ function NotificationBell() {
     const unreadCount = notifications.filter(n => !n.read).length;
 
     return (
-        <div className="relative">
+        <div className="relative" ref={bellRef}>
             <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => setIsOpen(prev => !prev)}
                 className="relative cursor-pointer"
             >
                 <BellIcon className="w-4 h-4" />
@@ -167,9 +169,7 @@ function NotificationBell() {
                         </div>
 
                         <div className="max-h-96 overflow-y-auto">
-                            {loading ? (
-                                <div className="p-4 text-center">Loading...</div>
-                            ) : notifications.length === 0 ? (
+                            {notifications.length === 0 ? (
                                 <div className="p-4 text-center text-gray-500 dark:text-gray-400">
                                     No notifications
                                 </div>
@@ -177,8 +177,7 @@ function NotificationBell() {
                                 notifications.map((notification) => (
                                     <div
                                         key={notification.id}
-                                        className={`p-4 border-b border-gray-100 dark:border-gray-700 ${!notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-                                            }`}
+                                        className={`p-4 border-b border-gray-100 dark:border-gray-700 ${!notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                                     >
                                         <div className="flex justify-between items-start">
                                             <p className="text-sm text-gray-900 dark:text-white flex-1">
@@ -196,7 +195,6 @@ function NotificationBell() {
                                             )}
                                         </div>
 
-                                        {/* Challenge Request Actions */}
                                         {notification.type === 'challenge_request' && !notification.read && (
                                             <div className="flex gap-2 mt-3">
                                                 <Button

@@ -5,6 +5,7 @@ import { MenuIcon, XIcon, LogOutIcon } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { useAuth } from '../../hooks/useAuth'
 import NotificationBell from '../ui/NotificationBell'
+import Logo from '../../assets/logo.svg';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -24,9 +25,9 @@ function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold text-green-600 dark:text-green-400">
-                FitFrenzy
-              </span>
+              <div className="flex items-center space-x-2">
+                <img src={Logo} alt="FitFrenzy Logo" className="h-30 w-30" />
+              </div>
             </Link>
             {currentUser && (
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
