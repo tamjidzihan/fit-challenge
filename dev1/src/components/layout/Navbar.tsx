@@ -25,7 +25,7 @@ function Navbar() {
           <div className="flex">
             <Link to="/" className="flex-shrink-0 flex items-center">
               <span className="text-xl font-bold text-green-600 dark:text-green-400">
-                FitChallenge
+                FitFrenzy
               </span>
             </Link>
             {currentUser && (
