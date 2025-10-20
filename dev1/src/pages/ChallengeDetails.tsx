@@ -404,6 +404,7 @@ function ChallengeDetail() {
                           {participant.uid === challenge.creator && ' ★'}
                         </th>
                       ))}
+
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -440,6 +441,7 @@ function ChallengeDetail() {
                             </td>
                           )
                         })}
+
                       </tr>
                     ))}
                   </tbody>

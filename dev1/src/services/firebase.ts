@@ -120,10 +120,7 @@ export const challengeService = {
 
   async create(challenge: Challenge): Promise<Challenge> {
     // Ensure participants are stored as UIDs in database
-    const challengeToSave = {
-      ...challenge,
-      participants: challenge.participants.map(p => p.uid) // Store only UIDs
-    };
+    const challengeToSave = { ...challenge };
 
     const challengeRef = push(ref(database, 'challenges'));
     await set(challengeRef, challengeToSave);

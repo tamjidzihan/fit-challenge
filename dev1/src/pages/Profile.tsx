@@ -38,7 +38,7 @@ function Profile() {
         // Filter challenges for current user
         const userChallenges = allChallenges.filter(
           (challenge) =>
-            challenge.participants.includes(currentUser.uid) ||
+            challenge.participants.some(p => p.uid === currentUser.uid) ||
             challenge.creator === currentUser.uid,
         )
         setChallenges(userChallenges)

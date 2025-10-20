@@ -26,9 +26,10 @@ function Dashboard() {
         // Filter challenges for current user
         const filteredChallenges = allChallenges.filter(
           (challenge) =>
-            challenge.participants.includes(currentUser.uid) ||
+            challenge.participants.some(p => p.uid === currentUser.uid) ||
             challenge.creator === currentUser.uid,
         )
+
         setChallenges(filteredChallenges)
       } catch (error) {
         console.error('Error fetching challenges:', error)

@@ -71,8 +71,16 @@ function NotificationBell() {
             if (accept && notification.data.challengeId) {
                 // Add current user to the challenge participants
                 const challenge = await challengeService.getById(notification.data.challengeId);
-                if (challenge && !challenge.participants.includes(currentUser.uid)) {
-                    const updatedParticipants = [...challenge.participants, currentUser.uid];
+                if (challenge && !challenge.participants.some(p => p.uid === currentUser.uid)) {
+                    const updatedParticipants = [
+                        ...challenge.participants,
+                        {
+                            uid: currentUser.uid,
+                            email: currentUser.email ?? '',
+                            displayName: currentUser.displayName ?? 'Unknown User',
+                        },
+                    ];
+
                     await set(ref(database, `challenges/${challenge.id}/participants`), updatedParticipants);
 
                     // Create a success notification

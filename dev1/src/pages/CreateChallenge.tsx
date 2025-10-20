@@ -54,10 +54,12 @@ function CreateChallenge() {
 
       // Get current user data for the creator participant
       const currentUserData = await userService.getUserById(currentUser.uid);
+      console.log(`current user name ${currentUser.displayName}`)
+
       const creatorParticipant: Participant = {
         uid: currentUser.uid,
         email: currentUserData?.email || currentUser.email || 'Unknown',
-        displayName: currentUserData?.displayName || currentUser.displayName || 'Unknown User'
+        displayName: currentUser.displayName || 'Unknown User'
       }
 
       const newChallenge: Challenge = {
@@ -65,7 +67,7 @@ function CreateChallenge() {
         description,
         startDate,
         endDate,
-        participants: [creatorParticipant], // Now using Participant objects
+        participants: [creatorParticipant],
         fields,
         creator: currentUser.uid,
       }
