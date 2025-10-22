@@ -7,12 +7,48 @@ import CreateChallenge from './pages/CreateChallenge';
 import ChallengeDetails from './pages/ChallengeDetails';
 import Profile from './pages/Profile';
 import ProtectedRoute from './ProtectedRoute';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import Contact from './pages/Contact';
+import { Progress } from './components/ui/Progress';
 
 export function AppRouter() {
   return <BrowserRouter>
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route
+        path="/privacy"
+        element={
+          <Layout>
+            <PrivacyPolicy />
+          </Layout>
+        }
+      />
+      <Route
+        path="/progress"
+        element={
+          <Layout>
+            <Progress />
+          </Layout>
+        }
+      />
+      <Route
+        path="/terms"
+        element={
+          <Layout>
+            <TermsOfService />
+          </Layout>
+        }
+      />
+      <Route
+        path="/contact"
+        element={
+          <Layout>
+            <Contact />
+          </Layout>
+        }
+      />
       <Route path="/" element={
         <ProtectedRoute>
           <Layout>
