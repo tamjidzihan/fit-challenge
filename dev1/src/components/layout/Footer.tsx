@@ -37,7 +37,7 @@ function Footer() {
             </ul>
           </div>
         </div>
-        <div className="text-center">
+        <div className="text-center mt-4">
           <p className="text-gray-500 dark:text-gray-400 text-md">
             Created by{' '}
             <a
