@@ -20,7 +20,7 @@ function Navbar() {
     }
   }
   return (
-    <nav className="bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700">
+    <nav className="shadow-sm bg-gray-900 border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
@@ -56,7 +56,7 @@ function Navbar() {
           {currentUser ? (
             <div className="hidden sm:ml-6 sm:flex sm:items-center">
               <div className="ml-3 relative flex items-center gap-4">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <span className="text-sm font-medium text-gray-300">
                   {currentUser.displayName}
                 </span>
                 <NotificationBell />

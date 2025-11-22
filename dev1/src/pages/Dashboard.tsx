@@ -426,23 +426,23 @@ function Dashboard() {
               <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Upcoming Deadlines */}
                 {activeChallenges.length > 0 && (
-                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
+                  <Card className="bg-gray-800/80 backdrop-blur-sm  border-gray-700">
                     <CardHeader>
-                      <CardTitle className="flex items-center text-gray-900 dark:text-white gap-2">
+                      <CardTitle className="flex items-center text-white gap-2">
                         <CalendarIcon className="h-5 w-5 text-orange-500" />
                         Upcoming Deadlines
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {activeChallenges.slice(0, 3).map((challenge) => (
-                        <div key={challenge.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                        <div key={challenge.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-700/50">
                           <div>
-                            <p className="font-medium text-gray-900 dark:text-white text-sm">{challenge.name}</p>
-                            <p className="text-xs  text-gray-500 dark:text-gray-400">
+                            <p className="font-medium  text-white text-sm">{challenge.name}</p>
+                            <p className="text-xs   text-gray-400">
                               Ends {new Date(challenge.endDate).toLocaleDateString()}
                             </p>
                           </div>
-                          <Badge variant="secondary" className="ml-2 text-gray-900 dark:text-white">
+                          <Badge variant="secondary" className="ml-2  text-white">
                             {Math.ceil((new Date(challenge.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days
                           </Badge>
                         </div>
@@ -453,19 +453,19 @@ function Dashboard() {
 
                 {/* Recent Completions */}
                 {pastChallenges.length > 0 && (
-                  <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
+                  <Card className="bg-gray-800/80 backdrop-blur-sm border-gray-700">
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
+                      <CardTitle className="flex items-center text-white gap-2">
                         <TrophyIcon className="h-5 w-5 text-yellow-500" />
                         Recent Achievements
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {pastChallenges.slice(0, 3).map((challenge) => (
-                        <div key={challenge.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                        <div key={challenge.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-700/50">
                           <div>
-                            <p className="font-medium text-sm">{challenge.name}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                            <p className="font-medium text-white text-sm">{challenge.name}</p>
+                            <p className="text-xs  text-gray-400">
                               Completed {new Date(challenge.endDate).toLocaleDateString()}
                             </p>
                           </div>

@@ -8,10 +8,10 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({
   children
 }) => {
-  return <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+  return <div className="min-h-screen bg-black">
     <Navbar />
     <motion.main
-      className="min-h-screen py-10 px-4 sm:px-6 lg:px-8"
+      className="py-10 px-4 sm:px-6 lg:px-8"
       initial={{
         opacity: 0,
       }}
